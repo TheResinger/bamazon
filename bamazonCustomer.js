@@ -7,11 +7,11 @@ let connection = sql.createConnection({
     password: "root",
     database: "bamazon"
 });
-const itemIDList = [];
-const productNameList = [];
-const departmentList = [];
-const priceList = [];
-const stockList = [];
+let itemIDList = [];
+let productNameList = [];
+let departmentList = [];
+let priceList = [];
+let stockList = [];
 
 connection.connect(err => {
     if (err) throw err;
@@ -52,26 +52,40 @@ listItems = () => {
                             message: "How many would you like to buy?"
                         },
                     ]).then(res => {
-                        stockList.forEach(x => {
-                            console.log(x);
-                        })
-                        console.log(`${res.buyAmount} | ${stockList[input.op - 1]}`);
                         if(res.buyAmount <= stockList[input.op - 1])
                         {
                             console.log("Order submitted.");
                             let stockUpdate = stockList[input.op - 1] - res.buyAmount;
-                            console.log(stockUpdate);
-                            let query = `update items set stock ${stockUpdate} where id = ${itemIDList[input.op -1]}`
-                            console.log(query);
+                            let totalCost = priceList[input.op - 1] * res.buyAmount;
+                            let query = `update items set stock = ${stockUpdate} where id = ${itemIDList[input.op -1]}`
+                            connection.query(query, (err,response) => {
+                                if (err) throw err;
+                                console.log(`You bought ${res.buyAmount} of ${productNameList[input.op - 1]} for ${totalCost.toFixed(2)}! Thank you for shopping at Bamazon!`);
+                                itemIDList = [];
+                                productNameList = [];
+                                departmentList = [];
+                                priceList = [];
+                                stockList = [];
+                                clearArrays();
+                            })
                         }
                         else
                         {
                             console.log("Not enough in stock, PLease try again later.");
-                            listItems();
+                            clearArrays();
                         }
                     });
                 }
             }
         });
     });
+}
+
+clearArrays = () => {
+    itemIDList = [];
+    productNameList = [];
+    departmentList = [];
+    priceList = [];
+    stockList = [];
+    connection.end();
 }
