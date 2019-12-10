@@ -1,3 +1,13 @@
-# Bamazon
+# bamazon
+A node CLI Application designed to emulate a store front utilizing MySQL databases.
+## TODO
 
-This is a Node CLI app that utalizes MySQL Databases for purchasing items.
+
+
+## Technologies Used
+
+1. mySQL
+2. Node.js
+
+
+
